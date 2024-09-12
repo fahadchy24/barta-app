@@ -1,15 +1,30 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\LogoutController;
+use App\Http\Controllers\Auth\RegistrationController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
-
 
 Route::middleware('auth')->group(function () {
     Route::view('/', 'home')->name('home');
-    Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
-    Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    // User Routes
+    Route::group(['as' => 'user.', 'controller' => UserController::class, 'prefix' => 'user'], function () {
+        Route::get('/profile', 'index')->name('profile.index');
+        Route::get('/profile/edit', 'edit')->name('profile.edit');
+        Route::patch('/profile', 'update')->name('profile.update');
+        Route::delete('/profile', 'destroy')->name('profile.destroy');
+        Route::put('/password', 'updatePassword')->name('password.update');
+    });
+
+    Route::post('logout', LogoutController::class)->name('logout');
 });
 
-require __DIR__ . '/auth.php';
+// Authentication Routes
+Route::middleware('guest')->group(function () {
+    Route::get('register', [RegistrationController::class, 'index'])->name('register');
+    Route::post('register', [RegistrationController::class, 'store']);
+    Route::get('login', [LoginController::class, 'create'])->name('login');
+    Route::post('login', [LoginController::class, 'login']);
+});

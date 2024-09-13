@@ -38,6 +38,8 @@ class RegistrationController extends Controller
             'username' => $validated['username'],
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
         return redirect(route('login', absolute: false))->with('success', 'Registration Successful. Please login to your account.');

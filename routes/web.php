@@ -14,8 +14,6 @@ Route::middleware('auth')->group(function () {
         Route::get('/profile', 'index')->name('profile.index');
         Route::get('/profile/edit', 'edit')->name('profile.edit');
         Route::patch('/profile', 'update')->name('profile.update');
-        Route::delete('/profile', 'destroy')->name('profile.destroy');
-        Route::put('/password', 'updatePassword')->name('password.update');
     });
 
     Route::post('logout', LogoutController::class)->name('logout');

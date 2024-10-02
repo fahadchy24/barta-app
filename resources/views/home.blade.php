@@ -3,7 +3,13 @@
 @section('title', 'Home')
 
 @section('content')
-    <div class="text-center p-12 border border-gray-800 rounded-xl">
-        <h1 class="text-3xl justify-center items-center">Welcome to Barta!</h1>
-    </div>
+    @include('components.post-card.create')
+
+    <!-- Newsfeed -->
+    <section id="newsfeed" class="space-y-6">
+        @include('components.post-card.post', ['posts' => $posts])
+
+        @include('components.post-card.image', ['posts' => $posts])
+    </section>
+    <!-- /Newsfeed -->
 @endsection

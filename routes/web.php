@@ -3,11 +3,13 @@
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\RegistrationController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\PostController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth')->group(function () {
-    Route::view('/', 'home')->name('home');
+    Route::get('/', HomeController::class)->name('home');
 
     // User Routes
     Route::group(['as' => 'user.', 'controller' => UserController::class, 'prefix' => 'user'], function () {
@@ -15,6 +17,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/profile/edit', 'edit')->name('profile.edit');
         Route::patch('/profile', 'update')->name('profile.update');
     });
+
+    // Post Routes
+    Route::resource('posts', PostController::class)->only(['store', 'update', 'destroy']);
 
     Route::post('logout', LogoutController::class)->name('logout');
 });

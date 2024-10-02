@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -14,7 +13,7 @@ class PostController extends Controller
     {
         Post::create([
             'author_id' => auth()->id(),
-            'message' => $request->message
+            'message' => $request->message,
         ]);
 
         return redirect()->back();

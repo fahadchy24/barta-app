@@ -17,6 +17,7 @@ class UserController extends Controller
     {
         return view('profile.index', [
             'user' => $request->user(),
+            'posts' => DB::table('posts')->where('author_id', $request->user()->id)->get(),
         ]);
     }
 

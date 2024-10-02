@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'My Profile')
+@section('title', 'Edit Profile')
 
 @section('content')
     <!-- Profile Edit Form -->

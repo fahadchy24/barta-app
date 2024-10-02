@@ -11,6 +11,7 @@ class HomeController extends Controller
     public function __invoke(Request $request): View
     {
         $posts = Post::latest()->get();
+
         return view('home', compact('posts'));
     }
 }

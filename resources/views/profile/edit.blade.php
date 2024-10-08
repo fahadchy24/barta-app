@@ -4,7 +4,6 @@
 
 @section('content')
     <!-- Profile Edit Form -->
-
     <form action="{{ route('user.profile.update') }}" method="POST">
         @csrf
         @method('PATCH')
@@ -18,16 +17,6 @@
                     This information will be displayed publicly so be careful what you
                     share.
                 </p>
-
-                @if ($errors->any())
-                    <div class="alert alert-danger">
-                        <ul>
-                            @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
-                    </div>
-                @endif
 
                 <div class="mt-10 border-b border-gray-900/10 pb-12">
                     <div class="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">

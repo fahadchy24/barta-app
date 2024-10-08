@@ -45,9 +45,11 @@
     </section>
     <!-- /Cover Container -->
 
-    @if($posts->first()->attachment == NULL )
-        @include('components.post-card.post', ['posts' => $posts])
-    @else
-        @include('components.post-card.image', ['posts' => $posts])
-    @endif
+    @if(count($posts) > 0)
+        @if($posts->first()->attachment == NULL )
+            @include('components.post-card.post', ['posts' => $posts])
+        @else
+            @include('components.post-card.image', ['posts' => $posts])
+        @endif
+    @endisset
 @endsection

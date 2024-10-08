@@ -6,7 +6,6 @@ use App\Models\Post;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Validation\Rule;
@@ -37,21 +36,12 @@ class UserController extends Controller
             'last_name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique('users')->ignore($request->user()->id)],
             'password' => ['nullable', 'string', 'min:8', Password::defaults()],
-            'bio' => ['nullable'],
+            'bio' => ['nullable', 'string'],
         ]);
 
-        DB::table('users')
-            ->where('id', $request->user()->id)
-            ->update([
-                'first_name' => $validated['first_name'],
-                'last_name' => $validated['last_name'],
-                'email' => $validated['email'],
-                'password' => Hash::make($validated['password']),
-                'bio' => $validated['bio'],
-                'updated_at' => now(),
-            ]);
+        $request->user()->update(array_merge($validated, ['password' => Hash::make($validated['password'])]));
 
-        return Redirect::route('user.profile.edit')->with('status', 'profile-updated');
+        return Redirect::route('user.profile.edit')->with('status', 'profile updated');
     }
 
     public function searchedResult($username): View

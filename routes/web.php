@@ -9,7 +9,8 @@ use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth')->group(function () {
-    Route::get('/', HomeController::class)->name('home');
+    Route::get('/', [HomeController::class, 'index'])->name('home');
+    Route::get('/user/search', [HomeController::class, 'userSearch'])->name('user.search');
 
     // User Routes
     Route::group(['as' => 'user.', 'controller' => UserController::class, 'prefix' => 'user'], function () {
@@ -17,6 +18,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/profile/edit', 'edit')->name('profile.edit');
         Route::patch('/profile', 'update')->name('profile.update');
     });
+
+    // Search Result
+    Route::get('/user/{username}', [UserController::class, 'searchedResult']);
 
     // Post Routes
     Route::resource('posts', PostController::class)->only(['store', 'update', 'destroy']);

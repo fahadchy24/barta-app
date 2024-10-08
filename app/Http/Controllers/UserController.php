@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Post;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -17,7 +19,7 @@ class UserController extends Controller
     {
         return view('profile.index', [
             'user' => $request->user(),
-            'posts' => DB::table('posts')->where('author_id', $request->user()->id)->get(),
+            'posts' => Post::with('author')->where('author_id', $request->user()->id)->get(),
         ]);
     }
 
@@ -50,5 +52,15 @@ class UserController extends Controller
             ]);
 
         return Redirect::route('user.profile.edit')->with('status', 'profile-updated');
+    }
+
+    public function searchedResult($username): View
+    {
+        $user = User::query()->where('username', $username)->firstOrFail();
+
+        return view('profile.index', [
+            'user' => $user,
+            'posts' => Post::with('author')->where('author_id', $user->id)->get(),
+        ]);
     }
 }

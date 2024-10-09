@@ -4,7 +4,6 @@
 
 @section('content')
     <!-- Profile Edit Form -->
-
     <form action="{{ route('user.profile.update') }}" method="POST">
         @csrf
         @method('PATCH')

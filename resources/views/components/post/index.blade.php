@@ -1,5 +1,5 @@
 <!-- Barta Card -->
-@foreach($posts as $post )
+@foreach($posts as $post)
     <article
         class="bg-white border-2 border-black rounded-lg shadow mx-auto max-w-none px-4 py-5 sm:px-6">
         <!-- Barta Card Top -->
@@ -18,13 +18,13 @@
                     <!-- User Info -->
                     <div class="text-gray-900 flex flex-col min-w-0 flex-1">
                         <a
-                            href="http://127.0.0.1:8000/#"
+                            href="{{ route('user.searchedResult', $post->author->username) }}"
                             class="hover:underline font-semibold line-clamp-1">
                             {{ $post->author->full_name }}
                         </a>
 
                         <a
-                            href="http://127.0.0.1:8000/#"
+                            href="{{ route('user.searchedResult', $post->author->username) }}"
                             class="hover:underline text-sm text-gray-500 line-clamp-1">
                             {{ '@' . $post->author->username }}
                         </a>
@@ -34,7 +34,7 @@
 
                 @if(Auth::check() && Auth::id() == $post->author_id)
                     <!-- Card Action Dropdown -->
-                    <div class="flex flex-shrink-0 self-center" x-data="{ open: false }">
+                    <div class="flex flex-shrink-0 self-center" x-data="{ open: false, openModal: false }">
                         <div class="relative inline-block text-left">
                             <div>
                                 <button
@@ -57,6 +57,7 @@
                             <div
                                 x-show="open"
                                 @click.away="open = false"
+                                @keydown.escape.window="open = false"
                                 class="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
                                 role="menu"
                                 aria-orientation="vertical"
@@ -77,46 +78,64 @@
                                         class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
                                         <!-- Background overlay -->
                                         <div x-show="openModal"
-                                             class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
+                                             class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
+                                        ></div>
 
                                         <!-- Modal Content -->
-                                        <div
-                                            x-show="openModal"
-                                            class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:align-middle sm:max-w-lg sm:w-full">
+                                        <div x-show="openModal"
+                                             class="fixed z-10 inset-0 overflow-y-auto"
+                                             aria-labelledby="modal-title" role="dialog" aria-modal="true"
+                                             @keydown.escape.window="openModal = false">
 
-                                            <form action="{{ route('posts.update', $post->id) }}" method="POST"
-                                                  class="bg-white border-2 border-black rounded-lg shadow mx-auto max-w-none px-4 py-5 sm:px-6">
-                                                @csrf
-                                                @method('PUT')
+                                            <div
+                                                class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                                                <div
+                                                    class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:align-middle sm:max-w-lg sm:w-full">
 
-                                                <!-- Modal Header -->
-                                                <div class="bg-white sm:pb-4">
-                                                    <h3 class="text-lg leading-6 font-medium text-gray-900"
-                                                        id="modal-title">Edit Post</h3>
-                                                </div>
+                                                    <form action="{{ route('posts.update', $post->id) }}" method="POST"
+                                                          class="bg-white border-2 border-black rounded-lg shadow mx-auto max-w-none px-4 py-5 sm:px-6"
+                                                          enctype="multipart/form-data"
+                                                          @submit="openModal = false">
+                                                        @csrf
+                                                        @method('PUT')
 
-                                                <!-- Modal Body -->
-                                                <div class="p-2">
+                                                        <!-- Modal Header -->
+                                                        <div class="bg-white sm:pb-4">
+                                                            <h3 class="text-lg leading-6 font-medium text-gray-900"
+                                                                id="modal-title">Edit Post</h3>
+                                                        </div>
+
+                                                        <!-- Modal Body -->
+                                                        <div class="p-2">
                                                         <textarea
                                                             name="message"
                                                             class="block w-full pt-2 text-gray-900 rounded-lg border-none outline-none focus:ring-0 focus:ring-offset-0"
                                                             rows="4"
                                                         >{{ old('message', $post->message) }}</textarea>
-                                                </div>
+                                                        </div>
 
-                                                <!-- Modal Footer -->
-                                                <div
-                                                    class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-                                                    <button type="submit"
-                                                            class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:ml-3 sm:w-auto sm:text-sm">
-                                                        Save
-                                                    </button>
-                                                    <button @click="openModal = false" type="button"
-                                                            class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
-                                                        Cancel
-                                                    </button>
+                                                        @if($post->picture)
+                                                            <img
+                                                                src="{{ asset('post/images/'. $post->picture) }}"
+                                                                class="min-h-auto w-full rounded-lg object-contain max-h-64 md:max-h-72"
+                                                                alt=""/>
+                                                        @endif
+
+                                                        <!-- Modal Footer -->
+                                                        <div
+                                                            class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                                                            <button type="submit"
+                                                                    class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:ml-3 sm:w-auto sm:text-sm">
+                                                                Save
+                                                            </button>
+                                                            <button @click="openModal = false" type="button"
+                                                                    class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                                                                Cancel
+                                                            </button>
+                                                        </div>
+                                                    </form>
                                                 </div>
-                                            </form>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -139,8 +158,16 @@
         </header>
 
         <!-- Content -->
-        <div class="py-4 text-gray-700 font-normal">
-            {!! $post->message !!}
+        <div class="py-4 text-gray-700 font-normal space-y-2">
+            @if($post->picture)
+                <img
+                    src="{{ asset('post/images/'. $post->picture) }}"
+                    class="min-h-auto w-full rounded-lg object-contain max-h-64 md:max-h-72"
+                    alt=""/>
+            @endif
+            <p>
+                {!! $post->message !!}
+            </p>
         </div>
 
         <!-- Date Created & View Stat -->

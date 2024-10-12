@@ -3,13 +3,11 @@
 @section('title', 'Home')
 
 @section('content')
-    @include('components.post-card.create')
+    @include('components.post.create')
 
     <!-- Newsfeed -->
     <section id="newsfeed" class="space-y-6">
-        @include('components.post-card.post', ['posts' => $posts])
-
-        @include('components.post-card.image', ['posts' => $posts])
+        @include('components.post.index', ['posts' => $posts])
     </section>
     <!-- /Newsfeed -->
 @endsection

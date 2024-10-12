@@ -6,15 +6,31 @@ use App\Models\Post;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
 
 class PostController extends Controller
 {
     public function store(Request $request): RedirectResponse
     {
-        Post::create([
-            'author_id' => auth()->id(),
-            'message' => $request->message,
+        $request->validate([
+            'message' => 'required_without:picture',
+            'picture' => 'required_without:message|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
+
+        $post = new Post();
+        $post->author_id = auth()->id();
+        $post->message = $request->message;
+
+        if ($request->hasFile('picture')) {
+            $file = $request->file('picture');
+            $name = $file->getClientOriginalName();
+            $extension = $file->getClientOriginalExtension();
+            $picture = $name . time() . '.' . $extension;
+            $file->move(public_path('post/images'), $picture);
+            $post->picture = $picture;
+        }
+
+        $post->save();
 
         return redirect()->back();
     }
@@ -22,7 +38,7 @@ class PostController extends Controller
     public function update(Request $request, Post $post): RedirectResponse
     {
         $validatedData = $request->validate([
-            'message' => 'required|string',
+            'message' => 'required_without:picture|string',
         ]);
 
         if (Auth::id() !== $post->author_id) {
@@ -38,6 +54,12 @@ class PostController extends Controller
     {
         if (Auth::id() !== $post->author_id) {
             return redirect()->back()->withErrors('You are not authorized to delete this post.');
+        }
+
+        $oldFilePath = public_path('post/images/' . $post->picture);
+
+        if (File::exists($oldFilePath)) {
+            File::delete($oldFilePath);
         }
 
         $post->delete();

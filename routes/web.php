@@ -20,7 +20,7 @@ Route::middleware('auth')->group(function () {
     });
 
     // Search Result
-    Route::get('/user/{username}', [UserController::class, 'searchedResult']);
+    Route::get('/user/{username}', [UserController::class, 'searchedResult'])->name('user.searchedResult');
 
     // Post Routes
     Route::resource('posts', PostController::class)->only(['store', 'update', 'destroy']);

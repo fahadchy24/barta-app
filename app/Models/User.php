@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Storage;
 
 class User extends Authenticatable
 {
@@ -23,7 +24,8 @@ class User extends Authenticatable
         'username',
         'email',
         'password',
-        'bio'
+        'bio',
+        'avatar'
     ];
 
     /**
@@ -59,4 +61,20 @@ class User extends Authenticatable
             get: fn() => $this->first_name . ' ' . $this->last_name,
         );
     }
+
+    public function avatarUrl(): Attribute
+    {
+        return Attribute::make(
+            get: fn() => $this->avatar ? asset(Storage::url($this->avatar)) : 'https://via.placeholder.com/150',
+        );
+    }
+
+//    public function getAvatarUrlAttribute(): string
+//    {
+//        if ($this->avatar) {
+//            return asset(Storage::url($this->avatar));
+//        }
+//
+//        return 'https://via.placeholder.com/150';
+//    }
 }

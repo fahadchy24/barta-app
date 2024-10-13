@@ -4,10 +4,9 @@
 
 @section('content')
     <!-- Profile Edit Form -->
-    <form action="{{ route('user.profile.update') }}" method="POST">
+    <form action="{{ route('user.profile.update') }}" method="POST" enctype="multipart/form-data">
         @csrf
         @method('PATCH')
-
         <div class="space-y-12">
             <div class="border-b border-gray-900/10 pb-12">
                 <h2 class="text-xl font-semibold leading-7 text-gray-900">
@@ -19,6 +18,34 @@
                 </p>
 
                 <div class="mt-10 border-b border-gray-900/10 pb-12">
+                    <div class="col-span-full mt-10 pb-10" x-data="{avatar :'{{ $user->avatar_url }}'}">
+                        <label
+                            for="photo"
+                            class="block text-sm font-medium leading-6 text-gray-900"
+                        >Photo</label
+                        >
+                        <div class="mt-2 flex items-center gap-x-3">
+                            <input
+                                class="hidden"
+                                type="file"
+                                name="avatar"
+                                id="avatar"
+                                @change="avatar = URL.createObjectURL($event.target.files[0])"/>
+                            <img
+                                class="h-32 w-32 rounded-full"
+                                {{--                                :src="avatar || 'asset('storage/user/avatars/'. $user->avatar)'"--}}
+                                :src="avatar ? avatar : '{{ asset($user->avatar_url) }}'"
+                                alt="Avatar Preview"
+                            />
+                            <label for="avatar">
+                                <div
+                                    class="rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+                                    Change
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
                     <div class="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
                         <div class="sm:col-span-3">
                             <label
@@ -126,7 +153,8 @@
                       name="bio"
                       rows="3"
                       class="block w-full rounded-md border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-gray-600 sm:text-sm sm:leading-6"
-                  >{!! $user->bio !!}</textarea>
+                  >{!! $user->bio !!}</textarea
+                  >
                         </div>
                         <p class="mt-3 text-sm leading-6 text-gray-600">
                             Write a few sentences about yourself.

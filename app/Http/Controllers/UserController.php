@@ -8,6 +8,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\View\View;
@@ -37,9 +38,24 @@ class UserController extends Controller
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique('users')->ignore($request->user()->id)],
             'password' => ['nullable', 'string', 'min:8', Password::defaults()],
             'bio' => ['nullable', 'string'],
+            'avatar' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
         ]);
 
-        $request->user()->update(array_merge($validated, ['password' => Hash::make($validated['password'])]));
+        $user = $request->user();
+
+        $avatarPath = null;
+        if ($request->hasFile('avatar')) {
+            if ($user->avatar) {
+                Storage::disk('public')->delete($user->avatar);
+            }
+
+            $avatarPath = $request->file('avatar')->store('user/avatars', 'public');
+        }
+
+        $request->user()->update(array_merge($validated, [
+            'password' => Hash::make($validated['password']),
+            'avatar' => $avatarPath ?? $user->avatar,
+        ]));
 
         return Redirect::route('user.profile.edit')->with('status', 'profile updated');
     }

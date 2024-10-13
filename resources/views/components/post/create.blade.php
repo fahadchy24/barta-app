@@ -12,8 +12,8 @@
             <div class="flex-shrink-0">
                 <img
                     class="h-10 w-10 rounded-full object-cover"
-                    src="https://avatars.githubusercontent.com/u/831997"
-                    alt="Ahmed Shamim"/>
+                    src="{{ asset(auth()->user()->avatar_url) }}"
+                    alt="{{ auth()->user()->full_name }}"/>
             </div>
             <!-- /User Avatar -->
 

@@ -6,7 +6,7 @@ use App\Models\Post;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 
 class PostController extends Controller
 {
@@ -17,17 +17,13 @@ class PostController extends Controller
             'picture' => 'required_without:message|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        $post = new Post();
+        $post = new Post;
         $post->author_id = auth()->id();
         $post->message = $request->message;
 
         if ($request->hasFile('picture')) {
-            $file = $request->file('picture');
-            $name = $file->getClientOriginalName();
-            $extension = $file->getClientOriginalExtension();
-            $picture = $name . time() . '.' . $extension;
-            $file->move(public_path('post/images'), $picture);
-            $post->picture = $picture;
+            $postImagePath = $request->file('picture')->store('post/images', 'public');
+            $post->picture = $postImagePath;
         }
 
         $post->save();
@@ -56,10 +52,8 @@ class PostController extends Controller
             return redirect()->back()->withErrors('You are not authorized to delete this post.');
         }
 
-        $oldFilePath = public_path('post/images/' . $post->picture);
-
-        if (File::exists($oldFilePath)) {
-            File::delete($oldFilePath);
+        if ($post->picture) {
+            Storage::disk('public')->delete($post->picture);
         }
 
         $post->delete();

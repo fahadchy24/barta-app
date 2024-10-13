@@ -7,7 +7,7 @@
             <div class="flex">
                 <div class="flex flex-shrink-0 items-center">
                     <a href="/">
-                        <h2 class="font-bold text-2xl">Barta</h2>
+                        <h2 class="font-bold text-2xl">{{ config('app.name') }}</h2>
                     </a>
                 </div>
                 <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
@@ -124,8 +124,8 @@
                             <span class="sr-only">Open user menu</span>
                             <img
                                 class="h-8 w-8 rounded-full"
-                                src="https://avatars.githubusercontent.com/u/831997"
-                                alt="Ahmed Shamim Hasan Shaon"/>
+                                src="{{ asset(auth()->user()->avatar_url) }}"
+                                alt="{{ auth()->user()->full_name }}"/>
                         </button>
                     </div>
 

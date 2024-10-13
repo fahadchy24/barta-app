@@ -25,7 +25,7 @@ class User extends Authenticatable
         'email',
         'password',
         'bio',
-        'avatar'
+        'avatar',
     ];
 
     /**
@@ -52,29 +52,20 @@ class User extends Authenticatable
     }
 
     protected $appends = [
-        'full_name'
+        'full_name',
     ];
 
     public function fullName(): Attribute
     {
         return Attribute::make(
-            get: fn() => $this->first_name . ' ' . $this->last_name,
+            get: fn () => $this->first_name.' '.$this->last_name,
         );
     }
 
     public function avatarUrl(): Attribute
     {
         return Attribute::make(
-            get: fn() => $this->avatar ? asset(Storage::url($this->avatar)) : 'https://via.placeholder.com/150',
+            get: fn () => $this->avatar ? asset(Storage::url($this->avatar)) : 'https://via.placeholder.com/150',
         );
     }
-
-//    public function getAvatarUrlAttribute(): string
-//    {
-//        if ($this->avatar) {
-//            return asset(Storage::url($this->avatar));
-//        }
-//
-//        return 'https://via.placeholder.com/150';
-//    }
 }

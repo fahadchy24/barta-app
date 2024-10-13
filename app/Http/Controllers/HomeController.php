@@ -28,7 +28,7 @@ class HomeController extends Controller
                     'username',
                     'first_name',
                     'last_name',
-                    'email'
+                    'email',
                 ],
                 'LIKE',
                 "%$query%")

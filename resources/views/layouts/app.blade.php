@@ -79,5 +79,10 @@
         </span>
     </div>
 </footer>
+
+@include('layouts.scripts.user-search')
+
+@yield('script')
+
 </body>
 </html>

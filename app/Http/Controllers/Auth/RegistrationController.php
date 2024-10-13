@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
@@ -32,14 +31,12 @@ class RegistrationController extends Controller
 
         $fullName = array_pad(explode(' ', trim($validated['name'])), 2, null);
 
-        DB::table('users')->insert([
+        User::create([
             'first_name' => trim(str_replace($fullName[(count($fullName) - 1)], '', $validated['name'])),
             'last_name' => $fullName[(count($fullName) - 1)],
             'username' => $validated['username'],
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
-            'created_at' => now(),
-            'updated_at' => now(),
         ]);
 
         return redirect(route('login', absolute: false))->with('success', 'Registration Successful. Please login to your account.');

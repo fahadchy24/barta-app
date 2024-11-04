@@ -7,7 +7,7 @@
 
     <!-- Newsfeed -->
     <section id="newsfeed" class="space-y-6">
-        @include('components.post.index', ['posts' => $posts])
+        <livewire:posts :posts="$posts"/>
     </section>
     <!-- /Newsfeed -->
 @endsection

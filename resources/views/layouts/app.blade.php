@@ -36,6 +36,8 @@
             display: none
         }
     </style>
+
+    @livewireStyles
 </head>
 
 <body class="bg-gray-100" x-cloak x-data="{openModal: false}"
@@ -79,5 +81,12 @@
         </span>
     </div>
 </footer>
+
+@include('layouts.scripts.user-search')
+
+@yield('script')
+
+@livewireScripts
+
 </body>
 </html>

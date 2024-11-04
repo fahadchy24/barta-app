@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Post;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\View\View;
@@ -17,7 +19,7 @@ class UserController extends Controller
     {
         return view('profile.index', [
             'user' => $request->user(),
-            'posts' => DB::table('posts')->where('author_id', $request->user()->id)->get(),
+            'posts' => Post::with('author')->where('author_id', $request->user()->id)->get(),
         ]);
     }
 
@@ -35,20 +37,36 @@ class UserController extends Controller
             'last_name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique('users')->ignore($request->user()->id)],
             'password' => ['nullable', 'string', 'min:8', Password::defaults()],
-            'bio' => ['nullable'],
+            'bio' => ['nullable', 'string'],
+            'avatar' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
         ]);
 
-        DB::table('users')
-            ->where('id', $request->user()->id)
-            ->update([
-                'first_name' => $validated['first_name'],
-                'last_name' => $validated['last_name'],
-                'email' => $validated['email'],
-                'password' => Hash::make($validated['password']),
-                'bio' => $validated['bio'],
-                'updated_at' => now(),
-            ]);
+        $user = $request->user();
 
-        return Redirect::route('user.profile.edit')->with('status', 'profile-updated');
+        $avatarPath = null;
+        if ($request->hasFile('avatar')) {
+            if ($user->avatar) {
+                Storage::disk('public')->delete($user->avatar);
+            }
+
+            $avatarPath = $request->file('avatar')->store('user/avatars', 'public');
+        }
+
+        $request->user()->update(array_merge($validated, [
+            'password' => Hash::make($validated['password']),
+            'avatar' => $avatarPath ?? $user->avatar,
+        ]));
+
+        return Redirect::route('user.profile.edit')->with('status', 'profile updated');
+    }
+
+    public function searchedResult($username): View
+    {
+        $user = User::query()->where('username', $username)->firstOrFail();
+
+        return view('profile.index', [
+            'user' => $user,
+            'posts' => Post::with('author')->where('author_id', $user->id)->get(),
+        ]);
     }
 }

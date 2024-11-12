@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Storage;
@@ -55,17 +56,27 @@ class User extends Authenticatable
         'full_name',
     ];
 
+    public function reactions(): BelongsToMany
+    {
+        return $this->belongsToMany(Post::class, 'post_reactions')->withTimestamps();
+    }
+
+    public function hasReaction(Post $post): bool
+    {
+        return $this->reactions()->where('post_id', $post->id)->exists();
+    }
+
     public function fullName(): Attribute
     {
         return Attribute::make(
-            get: fn () => $this->first_name.' '.$this->last_name,
+            get: fn() => $this->first_name . ' ' . $this->last_name,
         );
     }
 
     public function avatarUrl(): Attribute
     {
         return Attribute::make(
-            get: fn () => $this->avatar ? asset(Storage::url($this->avatar)) : 'https://via.placeholder.com/150',
+            get: fn() => $this->avatar ? asset(Storage::url($this->avatar)) : 'https://via.placeholder.com/150',
         );
     }
 }

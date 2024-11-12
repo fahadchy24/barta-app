@@ -5,9 +5,12 @@ namespace App\Livewire;
 use App\Models\Post;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
+use Livewire\WithPagination;
 
-class Posts extends Component
+class PostList extends Component
 {
+    use WithPagination;
+
     public int $amount = 10;
 
     public function loadMore(): void
@@ -17,7 +20,8 @@ class Posts extends Component
 
     public function render(): View
     {
-        $posts = Post::latest()->paginate($this->amount);
-        return view('livewire.posts', compact('posts'));
+        return view('livewire.post-list', [
+            'posts' => Post::latest()->paginate($this->amount),
+        ]);
     }
 }

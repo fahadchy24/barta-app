@@ -13,8 +13,6 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
         User::updateOrCreate([
             'first_name' => 'Test',
             'last_name' => 'Admin',

@@ -7,7 +7,7 @@
 
     <!-- Newsfeed -->
     <section id="newsfeed" class="space-y-6">
-        <livewire:posts :posts="$posts"/>
+        <livewire:post-list/>
     </section>
     <!-- /Newsfeed -->
 @endsection

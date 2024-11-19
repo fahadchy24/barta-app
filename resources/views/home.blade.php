@@ -3,11 +3,7 @@
 @section('title', 'Home')
 
 @section('content')
-    @include('components.post.create')
+    @include('post.create')
 
-    <!-- Newsfeed -->
-    <section id="newsfeed" class="space-y-6">
-        <livewire:post-list/>
-    </section>
-    <!-- /Newsfeed -->
+    @include('post.index')
 @endsection

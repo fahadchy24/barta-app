@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -31,6 +32,11 @@ class PostController extends Controller
         return redirect()->back();
     }
 
+    public function show(Post $post): View
+    {
+        return view('post.show', compact('post'));
+    }
+
     public function update(Request $request, Post $post): RedirectResponse
     {
         $validatedData = $request->validate([
@@ -43,7 +49,7 @@ class PostController extends Controller
 
         $post->update($validatedData);
 
-        return redirect()->route('home')->with('success', 'Post updated successfully.');
+        return redirect()->back()->with('success', 'Post updated successfully.');
     }
 
     public function destroy(Post $post): RedirectResponse

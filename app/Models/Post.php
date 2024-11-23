@@ -23,6 +23,11 @@ class Post extends Model
         return $this->belongsTo(User::class, 'author_id');
     }
 
+    public function comments(): HasMany
+    {
+        return $this->hasMany(Comment::class);
+    }
+
     public function reactions(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'post_reactions')->withTimestamps();

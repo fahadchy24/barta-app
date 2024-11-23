@@ -23,7 +23,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/user/{username}', [UserController::class, 'searchedResult'])->name('user.searchedResult');
 
     // Post Routes
-    Route::resource('posts', PostController::class)->only(['store', 'update', 'destroy']);
+    Route::resource('posts', PostController::class)->only(['store', 'show', 'update', 'destroy']);
 
     Route::post('logout', LogoutController::class)->name('logout');
 });
